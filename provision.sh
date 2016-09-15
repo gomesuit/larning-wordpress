@@ -25,3 +25,27 @@ chown nginx.nginx -R wordpress
 
 yum install -y mariadb-server
 
+
+
+
+yum install -y git
+git clone https://github.com/rbenv/rbenv.git
+mv rbenv .rbenv
+cd .rbenv/
+yum install -y gcc
+src/configure
+make -C src
+
+echo 'export PATH="~/.rbenv/bin:$PATH"' >> .bash_profile
+echo 'eval "$(rbenv init -)"' >> .bash_profile
+
+git clone git://github.com/sstephenson/ruby-build.git
+mkdir .rbenv/plugins
+mv ruby-build .rbenv/plugins/
+
+yum install -y openssl-devel readline-devel zlib-devel
+rbenv install 2.3.1
+
+
+
+
