@@ -11,7 +11,8 @@ yum install -y epel-release
 yum install -y nginx
 
 # install php-fpm
-yum install -y php-fpm php-mysql
+rpm -Uvh /vagrant/remi-release-7.rpm
+yum install -y php56-php-fpm php56-php-mysqlnd
 
 # install mariadb
 yum install -y mariadb-server
@@ -24,8 +25,8 @@ ln -s /vagrant/wordpress.conf /etc/nginx/conf.d/wordpress.conf
 chown nginx.nginx /etc/nginx/conf.d/wordpress.conf
 
 # setting php-fpm
-sed -i -e 's/user = apache/user = nginx/g' /etc/php-fpm.d/www.conf
-sed -i -e 's/group = apache/group = nginx/g' /etc/php-fpm.d/www.conf
+sed -i -e 's/user = apache/user = nginx/g' /opt/remi/php56/root/etc/php-fpm.d/www.conf
+sed -i -e 's/group = apache/group = nginx/g' /opt/remi/php56/root/etc/php-fpm.d/www.conf
 
 # setting wordpress
 cd /usr/share/nginx
@@ -38,7 +39,7 @@ ln -s /vagrant/wp-config.php /usr/share/nginx/wordpress/wp-config.php
 # start daemon 
 systemctl start mariadb
 systemctl start nginx
-systemctl start php-fpm
+systemctl start php56-php-fpm
 
 # initialize database
 mysql -u root -e "create database wordpress;"
