@@ -28,19 +28,42 @@ chown nginx.nginx /etc/nginx/conf.d/wordpress.conf
 sed -i -e 's/user = apache/user = nginx/g' /opt/remi/php56/root/etc/php-fpm.d/www.conf
 sed -i -e 's/group = apache/group = nginx/g' /opt/remi/php56/root/etc/php-fpm.d/www.conf
 
-# setting wordpress
-cd /usr/share/nginx
-wget https://ja.wordpress.org/wordpress-4.6.1-ja.zip
-unzip wordpress-4.6.1-ja.zip
-rm wordpress-4.6.1-ja.zip
-chown nginx.nginx -R wordpress
-ln -s /vagrant/wp-config.php /usr/share/nginx/wordpress/wp-config.php
-
 # start daemon 
 systemctl start mariadb
 systemctl start nginx
 systemctl start php56-php-fpm
 
-# initialize database
-mysql -u root -e "create database wordpress;"
+# install wp-cli
+cd
+yum install -y php56
+ln -s /bin/php56 /bin/php
+curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+chmod +x wp-cli.phar
+mv wp-cli.phar /usr/local/bin/wp
+
+# install wordpress
+mkdir -p /usr/share/nginx/wordpress
+chown nginx.nginx /usr/share/nginx/wordpress
+
+sudo -u nginx /usr/local/bin/wp core download \
+  --locale=ja \
+  --path=/usr/share/nginx/wordpress
+
+sudo -u nginx /usr/local/bin/wp core config \
+  --dbname='wordpress' \
+  --dbuser='root' \
+  --dbpass='' \
+  --dbhost='localhost' \
+  --path=/usr/share/nginx/wordpress
+
+sudo -u nginx /usr/local/bin/wp db create \
+  --path=/usr/share/nginx/wordpress
+
+sudo -u nginx /usr/local/bin/wp core install \
+  --url='192.168.33.60' \
+  --title='larning-wordpress' \
+  --admin_name='root' \
+  --admin_password='root' \
+  --admin_email='root@larning.wordpress.example' \
+  --path=/usr/share/nginx/wordpress
 
