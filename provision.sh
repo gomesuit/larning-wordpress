@@ -12,7 +12,7 @@ yum install -y nginx
 
 # install php-fpm
 rpm -Uvh /vagrant/remi-release-7.rpm
-yum install -y php56-php-fpm php56-php-mysqlnd
+yum install -y php56-php-fpm php56-php-mysqlnd php56-php-mbstring
 
 # install mariadb
 yum install -y mariadb-server
